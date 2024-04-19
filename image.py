@@ -55,7 +55,7 @@ class image:
         self.npimage = cv2.cvtColor(self.npimage, cv2.COLOR_BGR2GRAY)
 
     def blur(self):
-        self.npimage = cv2.GaussianBlur(self.npimage, (5, 5), 10)
+        self.npimage = cv2.GaussianBlur(self.npimage, (5, 5), 0)
 
     def sharpen(self):
         sharpening_kernel = np.array([[-1, -1, -1],

@@ -1,21 +1,24 @@
 import numpy as np
-from PIL import Image,ImageTk,ImageFilter
+import cv2
 
 class filters: 
     filterList=[]
 
-    def --init--(self,image):
+    def __init__(self,image):
         self.image=image
     
     def applyFilter(self,filter):
 
-        filterList.append(filter)
+        self.filterList.append(filter)
+        for fil in self.filterList:
+
         
 
     def revokeFilter(self, filter):
-        for fil in filterList:
+        if filter in self.filterList:
+            self.filterList.remove(filter)
+            
+        for fil in self.filterList:
+            pass
 
-        return
-
-    def 
         
