@@ -23,31 +23,38 @@ class image:
         cv2.destroyAllWindows()
 
     def filter_choose(self,filter):
-        
-        if filter=="resize":
-            self.resize()
-        elif filter=="crop":
-            self.crop()
-        elif filter=="rotate": 
-            self.rotate()
-        elif filter=="flip":
-            self.flip()
-        elif filter=="grayscale":
-            self.grayscale()
-        elif filter=="blur":
-            self.blur()
-        elif filter=="sharpen":
-            self.sharpen()
-        elif filter=="emboss":
-            self.emboss()
-        elif filter=="edge_detect":
-            self.edge_detect()
-        elif filter=="negative":
-            self.negative()
-        elif filter == "delete_background":
-            self.delete_background()
-        elif filter == "positive":
-            self.positive()
+        if len(filter)==1:
+            if filter[0]=="flip":
+                self.flip()
+            elif filter[0]=="grayscale":
+                print("graaaaaaaaay")
+                self.grayscale()
+            elif filter[0]=="sharpen":
+                self.sharpen()
+            elif filter[0]=="emboss":
+                self.emboss()
+            elif filter[0]=="edge_detect":
+                self.edge_detect()
+            elif filter[0]=="negative":
+                self.negative()
+            elif filter[0] == "delete_background":
+                self.delete_background()
+            elif filter[0] == "positive":
+                self.positive()
+            
+        elif len(filter)==2:
+            if filter[0]=="rotate": 
+                self.rotate(filter[1])
+            elif filter[0]=="blur":
+                self.blur(filter[1])
+        elif len(filter)==3:
+            if filter[0]=="resize":
+                self.resize(filter[1],filter[2])
+
+        elif len(filter)==5:
+            if filter[0]=="crop":
+                self.crop(filter[1],filter[2],filter[3],filter[5])
+
 
     def resize(self,new_width,new_height):
         self.npimage = cv2.resize(self.npimage, (new_width, new_height))
@@ -64,7 +71,7 @@ class image:
             self.npimage = cv2.rotate(self.npimage, cv2.cv2.ROTATE_90_COUNTERCLOCKWISE)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
-    def flip(self,direction):
+    def flip(self):
         self.npimage = cv2.rotate(self.npimage, cv2.ROTATE_180)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
@@ -72,8 +79,8 @@ class image:
         self.npimage = cv2.cvtColor(self.npimage, cv2.COLOR_BGR2GRAY)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
-    def blur(self):
-        self.npimage = cv2.GaussianBlur(self.npimage, (5, 5), 0)
+    def blur(self,radius):
+        self.npimage = cv2.GaussianBlur(self.npimage, (int(radius),int(radius)), 0)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def sharpen(self):
@@ -90,6 +97,7 @@ class image:
                               [ 0,  1, 2]])
 # Apply the embossing kernel to the image
         self.npimage = cv2.filter2D(self.npimage, -1, embossing_kernel)
+        self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def edge_detect(self):
         gray_image = cv2.cvtColor(self.npimage, cv2.COLOR_BGR2GRAY)
