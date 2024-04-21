@@ -19,31 +19,55 @@ class GUI(Tk):
         
         self.frame1 = LabelFrame(self, text="Image: ", padx=10, pady=10, width=700, height=600, bg="#1e1e1e", fg="white")
         self.frame1.pack(padx=10,pady=10)
-        
-        self.frame2 = LabelFrame(self, text="Tools: ", padx=10, pady=10, width=700, height=300, bg="#1e1e1e", fg="white")
+        self.frame1.pack_propagate(False)
+
+        self.frame2 = LabelFrame(self, text="Tools: ", padx=100, pady=50, width=300, height=700, bg="#1e1e1e", fg="white")
         self.frame2.pack(padx=10,pady=10)
-        
+
+
         self.importIm = Button(self.frame1, text="Import Image", command=self.importimage, bg="#4CAF50", fg="white")
         self.importIm.place(relx=0.5, rely=0.5, anchor="center")
           # Initialize lbl as None
 
-        # self.negative=Button(self.frame2, text="Negative", command=lambda: (self.im.applyFilter("edge_detect"),self.update_image(self.im.image.photoimage)), bg="#4CAF50", fg="white")
-        # self.negative.pack()
+        frame_negative = Frame(self.frame2,bg="#1e1e1e")
+        frame_negative.pack(side='left', padx=5, pady=5)
+        negative_var = BooleanVar()
+        label_negative = Label(frame_negative, text="Negative", bg="#1e1e1e", fg="white")
+        label_negative.pack(side='left')
+        self.negative = CTkSwitch(frame_negative, text="Negative", variable=negative_var, command=lambda: self.on_click("negative", negative_var))
+        self.negative.pack(side='left')
 
-        blur_var=BooleanVar()
-        self.blur=CTkSwitch(self.frame2,text="Blur", variable=blur_var, command=lambda: self.on_click("blur",blur_var))
-        self.blur.pack()
-        
-        edge_detect_var=BooleanVar()
-        self.edge_detect=CTkSwitch(self.frame2,text="Edge detect", variable=edge_detect_var, command=lambda: self.on_click("edge_detect",edge_detect_var))
-        self.edge_detect.pack()
 
-        sharpen_var=BooleanVar()
-        self.sharpen=CTkSwitch(self.frame2,text="Sharpen", variable=sharpen_var, command=lambda: self.on_click("sharpen",sharpen_var))
-        self.sharpen.pack()
+        frame_blur = Frame(self.frame2, bg="#1e1e1e")
+        frame_blur.pack(side='left', padx=5, pady=5)
+        blur_var = BooleanVar()
+        label_blur = Label(frame_blur, text="Blur", bg="#1e1e1e", fg="white")
+        label_blur.pack(side='left')
+        self.blur = CTkSwitch(frame_blur, text="Blur", variable=blur_var, command=lambda: self.on_click("blur", blur_var))
+        self.blur.pack(side='left')
 
+        frame_edge_detect = Frame(self.frame2, bg="#1e1e1e")
+        frame_edge_detect.pack(side='left', padx=5, pady=5)
+        edge_detect_var = BooleanVar()
+        label_edge_detect = Label(frame_edge_detect, text="edge_detect", bg="#1e1e1e", fg="white")
+        label_edge_detect.pack(side='left')
+        self.edge_detect=CTkSwitch(frame_edge_detect,text="Edge detect", variable=edge_detect_var, command=lambda: self.on_click("edge_detect",edge_detect_var))
+        self.edge_detect.pack(side='left',padx=5,pady=5)
+
+        frame_sharpen = Frame(self.frame2, bg="#1e1e1e")
+        frame_sharpen.pack(side='left', padx=5, pady=5)
+        sharpen_var = BooleanVar()
+        label_sharpen = Label(frame_sharpen, text="sharpen", bg="#1e1e1e", fg="white")
+        label_sharpen.pack(side='left')
+        self.sharpen = CTkSwitch(frame_sharpen, text="Sharpen", variable=sharpen_var, command=lambda: self.on_click("sharpen", sharpen_var))
+        self.sharpen.pack(side='left')
+
+        frame_grayscale = Frame(self.frame2, bg="#1e1e1e")
+        frame_grayscale.pack(side='left', padx=5, pady=5)
         grayscale_var=BooleanVar()
-        self.grayscale=CTkSwitch(self.frame2,text="Grayscale", variable=grayscale_var, command=lambda: self.on_click("grayscale",grayscale_var))
+        label_grayscale = Label(frame_grayscale, text="grayscale", bg="#1e1e1e", fg="white")
+        label_grayscale.pack(side='left')
+        self.grayscale = CTkSwitch(frame_grayscale,text="Grayscale", variable=grayscale_var, command=lambda: self.on_click("grayscale",grayscale_var))
         self.grayscale.pack()
     def on_click(self,filter,variable):
         if variable.get():
