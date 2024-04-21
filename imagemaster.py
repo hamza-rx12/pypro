@@ -11,12 +11,12 @@ from PIL import Image,ImageTk
 class GUI(Tk):
     def __init__(self):
         super().__init__()
-        self.filename = None 
-        self.lbl = None 
+        self.filename = None
+        self.lbl = None
         self.im = None
         self.title("Image Master")
         self.config(bg="#1e1e1e")
-        
+
         self.frame1 = LabelFrame(self, text="Image: ", padx=10, pady=10, width=700, height=600, bg="#1e1e1e", fg="white")
         self.frame1.grid(row=0,column=0,padx=10,pady=10)
         self.frame1.pack_propagate(False)
@@ -37,14 +37,14 @@ class GUI(Tk):
         self.bl.grid(row=0,column=0)
 
 
-        
+
         self.importIm = Button(self.frame1, text="Import Image", command=self.importimage, bg="#4CAF50", fg="white")
         self.importIm.place(relx=0.5, rely=0.5, anchor="center")
 
         # blur_var=BooleanVar()
         # self.blur=CTkSwitch(self.frame2,text="Blur", variable=blur_var, command=lambda: self.on_click(("blur",),blur_var))
         # self.blur.grid(row=0,column=0,padx=10,pady=10)
-        
+
         edge_detect_var=BooleanVar()
         self.edge_detect=CTkSwitch(self.frame2,text="Edge detect", variable=edge_detect_var, command=lambda: self.on_click(("edge_detect",),edge_detect_var))
         self.edge_detect.grid(row=0,column=1,padx=10,pady=10)
@@ -53,6 +53,24 @@ class GUI(Tk):
         self.sharpen=CTkSwitch(self.frame2,text="Sharpen", variable=sharpen_var, command=lambda: self.on_click(("sharpen",),sharpen_var))
         self.sharpen.grid(row=0,column=2,padx=10,pady=10)
 
+        frame_edge_detect = Frame(self.frame2, bg="#1e1e1e")
+        frame_edge_detect.pack(side='left', padx=5, pady=5)
+        edge_detect_var = BooleanVar()
+        label_edge_detect = Label(frame_edge_detect, text="edge_detect", bg="#1e1e1e", fg="white")
+        label_edge_detect.pack(side='left')
+        self.edge_detect=CTkSwitch(frame_edge_detect,text="Edge detect", variable=edge_detect_var, command=lambda: self.on_click("edge_detect",edge_detect_var))
+        self.edge_detect.pack(side='left',padx=5,pady=5)
+
+        frame_sharpen = Frame(self.frame2, bg="#1e1e1e")
+        frame_sharpen.pack(side='left', padx=5, pady=5)
+        sharpen_var = BooleanVar()
+        label_sharpen = Label(frame_sharpen, text="sharpen", bg="#1e1e1e", fg="white")
+        label_sharpen.pack(side='left')
+        self.sharpen = CTkSwitch(frame_sharpen, text="Sharpen", variable=sharpen_var, command=lambda: self.on_click("sharpen", sharpen_var))
+        self.sharpen.pack(side='left')
+
+        frame_grayscale = Frame(self.frame2, bg="#1e1e1e")
+        frame_grayscale.pack(side='left', padx=5, pady=5)
         grayscale_var=BooleanVar()
         self.grayscale=CTkSwitch(self.frame2,text="Grayscale", variable=grayscale_var, command=lambda: self.on_click(("grayscale",),grayscale_var))
         self.grayscale.grid(row=0,column=3,padx=10,pady=10)
@@ -79,15 +97,15 @@ class GUI(Tk):
         self.show_image()
 
     def show_image(self):
-        if self.filename:  
+        if self.filename:
             self.im = imageProcessor(self.filename)
             self.im.path = self.filename
-            if self.im is not None:  
+            if self.im is not None:
                 self.lbl = Label(self.frame1, image=self.im.image.photoimage, bg="#1e1e1e")
                 self.lbl.image = self.im.image.photoimage
                 self.lbl.pack(padx=10, pady=10)
         else:
-            print("No image selected")   
+            print("No image selected")
 
     def update_image(self, photoimage):
         # self.lbl.config(image=photoimage);
@@ -95,8 +113,8 @@ class GUI(Tk):
             self.lbl.config(image=photoimage)
         else:
             print("No label found")
-        
-    
+
+
 
 
 class imageProcessor:
@@ -117,14 +135,14 @@ class imageProcessor:
                 pass
             else:
                 self.image.filter_choose(fil)
-            
+
 
             # if filter=="grayscale" and "edge_detect" in self.filterList:
             #     pass
             # elif filter=="edge_detect" and "grayscale" in self.filterList:
             #     pass
             # else:
-    
+
     def revokeFilter(self, filter):
         self.image=image.image(self.path)
         self.filterList.remove(filter)

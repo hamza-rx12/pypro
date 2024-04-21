@@ -1,22 +1,22 @@
 import cv2
 import numpy as np
+import image
+import imagemaster
 
-# # import image
-# import imagemaster
-# # im = image.image("./src/free-images.jpg")
-# # im.blur()
-# # im.sharpen()
-# # print(im.)
-# # # im.show()
-# im=imagemaster.imageProcessor("./src/free-images.jpg")
-# im.applyFilter("blur")
-# im.applyFilter("sharpen")
-# im.applyFilter("negative")
-# im.applyFilter("positive")
-# im.applyFilter("sharpen")
-# print(im.filterList)
-# im.image.show()
-# npimage = cv2.imread("./src/image.jpg");
+im = image.image("./src/free-images.jpg")
+im.blur()
+im.sharpen()
+print(im)
+im.show()
+im=imagemaster.imageProcessor("./src/free-images.jpg")
+im.applyFilter("blur")
+im.applyFilter("sharpen")
+im.applyFilter("negative")
+im.applyFilter("positive")
+im.applyFilter("sharpen")
+print(im.filterList)
+im.image.show()
+npimage = cv2.imread("./src/image.jpg");
 def bgremove1(myimage):
  
     # Blur to image to reduce noise
