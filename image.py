@@ -77,6 +77,8 @@ class image:
 
     def grayscale(self):
         self.npimage = cv2.cvtColor(self.npimage, cv2.COLOR_BGR2GRAY)
+        # self.npimage = cv2.cvtColor(self.npimage, cv2.COLOR_GRAY2BGR)
+        self.npimage = cv2.merge([self.npimage]*3)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def blur(self,radius):
@@ -107,6 +109,8 @@ class image:
     
     # Detect edges using the Canny edge detector
         self.npimage = cv2.Canny(blurred_image, 50, 150)
+        # self.npimage = cv2.cvtColor(self.npimage, cv2.COLOR_GRAY2BGR)
+        self.npimage = cv2.merge([self.npimage]*3)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def negative(self):
@@ -126,4 +130,5 @@ class image:
         mask = cv2.bitwise_not(mask)
         # Apply the inverted mask to the original image to make it negative
         self.npimage = cv2.bitwise_and(255 - self.npimage, 255 - self.npimage, mask=mask)
+        self.npimage = cv2.cvtColor(self.npimage, cv2.COLOR_GRAY2BGR)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)

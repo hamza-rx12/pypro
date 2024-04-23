@@ -57,6 +57,9 @@ class GUI(Tk):
         self.grayscale=CTkSwitch(self.frame2,text="Grayscale", variable=grayscale_var, command=lambda: self.on_click(("grayscale",),grayscale_var))
         self.grayscale.grid(row=0,column=3,padx=10,pady=10)
 
+        emboss_var=BooleanVar()
+        self.emboss=CTkSwitch(self.frame2,text="Emboss", variable=emboss_var, command=lambda: self.on_click(("emboss",),emboss_var))
+        self.emboss.grid(row=0,column=4,padx=10,pady=10)
     def on_slide(self,filter):
         self.im.applyFilter(filter)
         self.update_image(self.im.image.photoimage)
@@ -105,26 +108,14 @@ class imageProcessor:
         self.path=path
         self.image=image.image(path)
 
-
     def applyFilter(self,filter):
         # print("filteeeeeer")
         self.image=image.image(self.path)
         self.filterList.append(filter)
         for fil in self.filterList:
-            if filter==("grayscale",) and ("edge_detect",) in self.filterList:
-                pass
-            elif filter==("edge_detect",) and ("grayscale",) in self.filterList:
-                pass
-            else:
-                self.image.filter_choose(fil)
-            
+            self.image.filter_choose(fil)
+        print(self.filterList)
 
-            # if filter=="grayscale" and "edge_detect" in self.filterList:
-            #     pass
-            # elif filter=="edge_detect" and "grayscale" in self.filterList:
-            #     pass
-            # else:
-    
     def revokeFilter(self, filter):
         self.image=image.image(self.path)
         self.filterList.remove(filter)
