@@ -77,12 +77,17 @@ class image:
 
     def grayscale(self):
         self.npimage = cv2.cvtColor(self.npimage, cv2.COLOR_BGR2GRAY)
-        # self.npimage = cv2.cvtColor(self.npimage, cv2.COLOR_GRAY2BGR)
         self.npimage = cv2.merge([self.npimage]*3)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def blur(self,radius):
-        self.npimage = cv2.GaussianBlur(self.npimage, (int(radius),int(radius)), 0)
+        
+        radius=int(radius)
+        if radius==1: 
+            return
+        # if radius % 2 == 0: radius += 1
+        for i in range(radius):
+            self.npimage = cv2.GaussianBlur(self.npimage, (5,5), 0)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def sharpen(self):
@@ -97,19 +102,14 @@ class image:
         embossing_kernel = np.array([[-2, -1, 0],
                               [-1,  1, 1],
                               [ 0,  1, 2]])
-# Apply the embossing kernel to the image
+        # Apply the embossing kernel to the image
         self.npimage = cv2.filter2D(self.npimage, -1, embossing_kernel)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def edge_detect(self):
         gray_image = cv2.cvtColor(self.npimage, cv2.COLOR_BGR2GRAY)
-    
-    # Apply Gaussian blur to reduce noise
         blurred_image = cv2.GaussianBlur(gray_image, (5, 5), 0)
-    
-    # Detect edges using the Canny edge detector
         self.npimage = cv2.Canny(blurred_image, 50, 150)
-        # self.npimage = cv2.cvtColor(self.npimage, cv2.COLOR_GRAY2BGR)
         self.npimage = cv2.merge([self.npimage]*3)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
@@ -130,5 +130,5 @@ class image:
         mask = cv2.bitwise_not(mask)
         # Apply the inverted mask to the original image to make it negative
         self.npimage = cv2.bitwise_and(255 - self.npimage, 255 - self.npimage, mask=mask)
-        self.npimage = cv2.cvtColor(self.npimage, cv2.COLOR_GRAY2BGR)
+        # self.npimage = cv2.cvtColor(self.npimage, cv2.COLOR_GRAY2BGR)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)

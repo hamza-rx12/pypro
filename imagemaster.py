@@ -26,24 +26,23 @@ class GUI(Tk):
 
         self.frame3 = LabelFrame(self, text="Bars", padx=10, pady=10, width=300, height=600, bg="#1e1e1e", fg="white",relief="groove")
         self.frame3.grid(row=0,column=1,padx=10,pady=10,sticky='nsew')
-        # self.frame3.pack()
 
 
-        blur_intensity = IntVar()
-        blur_intensity.set(0)
+        blur_intensity = DoubleVar()
+        blur_intensity.set(1)
         self.bl=Label(self.frame3,text="Blur: ", bg="#1e1e1e", fg="white")
-        self.blur_slider = CTkSlider(self.frame3,from_=0, to=5, number_of_steps=5, variable=blur_intensity, command=lambda x=("blur",blur_intensity.get()): self.on_slide(x) )
+        self.blur_slider = CTkSlider(self.frame3,from_=1, to=21, 
+                                     number_of_steps=10, 
+                                     variable=blur_intensity, 
+                                     command=lambda x=blur_intensity.get(): self.on_slide("blur",x) if x==int(x) else None )
         self.blur_slider.grid(row=0,column=1)
         self.bl.grid(row=0,column=0)
 
 
         
-        self.importIm = Button(self.frame1, text="Import Image", command=self.importimage, bg="#4CAF50", fg="white")
+        self.importIm = Button(self.frame1, text="Import Image", command=self.importimage, bg="#383838", fg="white")
         self.importIm.place(relx=0.5, rely=0.5, anchor="center")
 
-        # blur_var=BooleanVar()
-        # self.blur=CTkSwitch(self.frame2,text="Blur", variable=blur_var, command=lambda: self.on_click(("blur",),blur_var))
-        # self.blur.grid(row=0,column=0,padx=10,pady=10)
         
         edge_detect_var=BooleanVar()
         self.edge_detect=CTkSwitch(self.frame2,text="Edge detect", variable=edge_detect_var, command=lambda: self.on_click(("edge_detect",),edge_detect_var))
@@ -60,9 +59,14 @@ class GUI(Tk):
         emboss_var=BooleanVar()
         self.emboss=CTkSwitch(self.frame2,text="Emboss", variable=emboss_var, command=lambda: self.on_click(("emboss",),emboss_var))
         self.emboss.grid(row=0,column=4,padx=10,pady=10)
-    def on_slide(self,filter):
+
+        negative_var=BooleanVar()
+        self.negative=CTkSwitch(self.frame2,text="Negative", variable=negative_var, command=lambda: self.on_click(("negative",),negative_var))
+        self.negative.grid(row=0,column=5,padx=10,pady=10)
+    def on_slide(self,*filter):
         self.im.applyFilter(filter)
         self.update_image(self.im.image.photoimage)
+
     def on_click(self,filter,variable):
         if variable.get():
             self.im.applyFilter(filter)
@@ -75,7 +79,7 @@ class GUI(Tk):
 
     def importimage(self):
         self.filename = filedialog.askopenfilename(
-            initialdir=".",  # Start in the current directory
+            initialdir=".",  
             title="Select image file",
             filetypes=[("Image files", "*.png *.jpg *.jpeg *.bmp *.gif")]
         )
@@ -93,7 +97,6 @@ class GUI(Tk):
             print("No image selected")   
 
     def update_image(self, photoimage):
-        # self.lbl.config(image=photoimage);
         if self.lbl:
             self.lbl.config(image=photoimage)
         else:
@@ -109,12 +112,21 @@ class imageProcessor:
         self.image=image.image(path)
 
     def applyFilter(self,filter):
-        # print("filteeeeeer")
+        filternames=list(map(lambda x: x[0],self.filterList))
         self.image=image.image(self.path)
-        self.filterList.append(filter)
-        for fil in self.filterList:
-            self.image.filter_choose(fil)
-        print(self.filterList)
+        if len(filter)==2 :
+            if filter[0] not in filternames:
+                self.filterList.append(filter)
+            else :
+                self.filterList[filternames.index(filter[0])]=filter
+            for fil in self.filterList:
+                self.image.filter_choose(fil)
+                print(self.filterList)
+        else:
+            self.filterList.append(filter)
+            for fil in self.filterList:
+                self.image.filter_choose(fil)
+            print(self.filterList)
 
     def revokeFilter(self, filter):
         self.image=image.image(self.path)
@@ -124,6 +136,9 @@ class imageProcessor:
 
 def main():
     app=GUI()
+    icon_image = Image.open('./src/Imagemaster.png')
+    icon_photo = ImageTk.PhotoImage(icon_image)
+    app.iconphoto(True, icon_photo)
     app.mainloop()
 
 if __name__ == "__main__":
