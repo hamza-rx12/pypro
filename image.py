@@ -14,7 +14,13 @@ class image:
             return None
         image_rgb = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
         pil_image = Image.fromarray(image_rgb)
+        width, height = pil_image.size
+        resize_factor = 570/height if (570/height) < (670/width) else 670/width
+        pil_image = pil_image.resize((int(width*resize_factor), int(height*resize_factor)))
+
+        # pil_image = pil_image.zoom(2)
         photo_image = ImageTk.PhotoImage(image=pil_image)
+
         return photo_image
     
     def show(self):

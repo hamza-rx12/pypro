@@ -16,15 +16,17 @@ class GUI(Tk):
         self.im = None
         self.title("Image Master")
         self.config(bg="#1e1e1e")
+
+        self.menu_bar()
         
-        self.frame1 = LabelFrame(self, text="Image: ", padx=10, pady=10, width=700, height=600, bg="#1e1e1e", fg="white")
+        self.frame1 = LabelFrame(self, text="Image: ", padx=10, pady=10, width=700, height=600, bg="#1e1e1e", fg="white", font=("monospace", 10))
         self.frame1.grid(row=0,column=0,padx=10,pady=10)
         self.frame1.pack_propagate(False)
 
-        self.frame2 = LabelFrame(self, text="Tools: ", padx=10, pady=10, width=700, height=300, bg="#1e1e1e", fg="white")
+        self.frame2 = LabelFrame(self, text="Tools: ", padx=10, pady=10, width=700, height=300, bg="#1e1e1e", fg="white", font=("monospace", 10))
         self.frame2.grid(row=1,column=0,padx=10,pady=10,columnspan=2)
 
-        self.frame3 = LabelFrame(self, text="Bars", padx=10, pady=10, width=300, height=600, bg="#1e1e1e", fg="white",relief="groove")
+        self.frame3 = LabelFrame(self, text="Bars: ", padx=10, pady=10, width=300, height=600, bg="#1e1e1e", fg="white", font=("monospace", 10), relief="groove")
         self.frame3.grid(row=0,column=1,padx=10,pady=10,sticky='nsew')
 
 
@@ -40,7 +42,7 @@ class GUI(Tk):
 
 
         
-        self.importIm = Button(self.frame1, text="Import Image", command=self.importimage, bg="#383838", fg="white")
+        self.importIm = Button(self.frame1, text="Import Image", command=self.importimage, bg="#383838", fg="white", borderwidth=0, activebackground="gray")
         self.importIm.place(relx=0.5, rely=0.5, anchor="center")
 
         
@@ -63,6 +65,18 @@ class GUI(Tk):
         negative_var=BooleanVar()
         self.negative=CTkSwitch(self.frame2,text="Negative", variable=negative_var, command=lambda: self.on_click(("negative",),negative_var))
         self.negative.grid(row=0,column=5,padx=10,pady=10)
+
+    def menu_bar(self):
+        menubar = Menu(self ,font=("monospace", 10),activebackground="gray", bg="#2e2e2e", fg="white", borderwidth=0, relief="flat")
+        menu_file = Menu(menubar,bg="#2e2e2e", fg="white", borderwidth=0, relief="flat", tearoff=0)
+        menu_file.add_command(label="New", activebackground="gray", command=None)
+        menu_file.add_command(label="Open", activebackground="gray", command=self.importimage)
+        menu_file.add_command(label="Save", activebackground="gray", command=self.saveimage)
+        menu_file.add_separator()
+        menu_file.add_command(label="Exit", command=exit)
+        menubar.add_cascade(label="File", menu=menu_file)
+        self.config(menu=menubar)
+
     def on_slide(self,*filter):
         self.im.applyFilter(filter)
         self.update_image(self.im.image.photoimage)
@@ -85,20 +99,34 @@ class GUI(Tk):
         )
         self.show_image()
 
+    def saveimage(self):
+        file_path = filedialog.asksaveasfilename(defaultextension=".jpg", 
+                                                 filetypes=[("JPEG files", "*.jpg"), 
+                                                            ("PNG files", "*.png"), 
+                                                            ("All files", "*.*")])
+        if file_path:
+            cv2.imwrite(file_path, self.im.image.npimage)
+            print("Image saved successfully at:", file_path)
+
+
     def show_image(self):
-        if self.filename:  
+        if self.filename: 
+            self.importIm.destroy() 
             self.im = imageProcessor(self.filename)
             self.im.path = self.filename
-            if self.im is not None:  
+            if self.im is not None: 
+                if self.lbl: self.lbl.destroy()
                 self.lbl = Label(self.frame1, image=self.im.image.photoimage, bg="#1e1e1e")
                 self.lbl.image = self.im.image.photoimage
-                self.lbl.pack(padx=10, pady=10)
+                # self.lbl.pack(padx=10, pady=10, anchor="center", fill="none", expand=False)
+                self.lbl.place(relx=0.5, rely=0.5, anchor="center")
         else:
             print("No image selected")   
 
     def update_image(self, photoimage):
         if self.lbl:
             self.lbl.config(image=photoimage)
+            # self.im.image.photoimage = self.im.image.photoimage.subsample(2,2)
         else:
             print("No label found")
         
