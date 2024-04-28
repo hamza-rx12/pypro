@@ -33,19 +33,57 @@ class GUI(Tk):
         blur_intensity = DoubleVar()
         blur_intensity.set(1)
         self.bl=Label(self.frame3,text="Blur: ", bg="#1e1e1e", fg="white")
-        self.blur_slider = CTkSlider(self.frame3,from_=1, to=21, 
-                                     number_of_steps=10, 
-                                     variable=blur_intensity, 
+        self.blur_slider = CTkSlider(self.frame3,from_=1, to=21,
+                                     number_of_steps=10,
+                                     variable=blur_intensity,
                                      command=lambda x=blur_intensity.get(): self.on_slide("blur",x) if x==int(x) else None )
         self.blur_slider.grid(row=0,column=1)
         self.bl.grid(row=0,column=0)
 
+        brightness_intensity = DoubleVar()
+        brightness_intensity.set(0)
+        self.brightness_label = Label(self.frame3, text="Brightness:", bg="#1e1e1e", fg="white")
+        self.brightness_slider = CTkSlider(self.frame3, from_=-100, to=100, number_of_steps=10,
+                                       variable=brightness_intensity,
+                                       command=lambda x=brightness_intensity.get(): self.on_slide("brightness", x) if x==int(x) else None)
+        self.brightness_label.grid(row=1, column=0, padx=(10, 0))
+        self.brightness_slider.grid(row=1, column=1)
 
-        
+        red_saturation_factor = DoubleVar()
+        red_saturation_factor.set(100)
+        self.red_saturation_label = Label(self.frame3, text="Red Saturation:", bg="#1e1e1e", fg="white")
+        self.red_saturation_slider = CTkSlider(self.frame3, from_=0, to=200,
+                                               number_of_steps=10,
+                                               variable=red_saturation_factor,
+                                               command=lambda x=red_saturation_factor.get(): self.on_slide(
+                                                   "adjust_red_saturation", x) if x == int(x) else None)
+        self.red_saturation_label.grid(row=2, column=0, padx=(10, 0))
+        self.red_saturation_slider.grid(row=2, column=1)
+
+        green_saturation_factor = DoubleVar()
+        green_saturation_factor.set(100)
+        self.green_saturation_label = Label(self.frame3, text="Green Saturation:", bg="#1e1e1e", fg="white")
+        self.green_saturation_slider = CTkSlider(self.frame3, from_=0, to=255,number_of_steps=10,
+                                                 variable=green_saturation_factor,
+                                                 command=lambda x=green_saturation_factor.get(): self.on_slide(
+                                                     "adjust_green_saturation", x))
+        self.green_saturation_label.grid(row=3, column=0, padx=(10, 0))
+        self.green_saturation_slider.grid(row=3, column=1)
+
+        blue_saturation_factor = DoubleVar()
+        blue_saturation_factor.set(100)
+        self.blue_saturation_label = Label(self.frame3, text="Blue Saturation:", bg="#1e1e1e", fg="white")
+        self.blue_saturation_slider = CTkSlider(self.frame3, from_=0, to=200,
+                                                variable=blue_saturation_factor,
+                                                command=lambda x=blue_saturation_factor.get(): self.on_slide(
+                                                    "adjust_blue_saturation", x))
+        self.blue_saturation_label.grid(row=4, column=0, padx=(10, 0))
+        self.blue_saturation_slider.grid(row=4, column=1)
+
         self.importIm = Button(self.frame1, text="Import Image", command=self.importimage, bg="#383838", fg="white", borderwidth=0, activebackground="gray")
         self.importIm.place(relx=0.5, rely=0.5, anchor="center")
 
-        
+
         edge_detect_var=BooleanVar()
         self.edge_detect=CTkSwitch(self.frame2,text="Edge detect", variable=edge_detect_var, command=lambda: self.on_click(("edge_detect",),edge_detect_var))
         self.edge_detect.grid(row=0,column=1,padx=10,pady=10)
@@ -80,6 +118,8 @@ class GUI(Tk):
     def on_slide(self,*filter):
         self.im.applyFilter(filter)
         self.update_image(self.im.image.photoimage)
+
+
 
     def on_click(self,filter,variable):
         if variable.get():
@@ -129,8 +169,8 @@ class GUI(Tk):
             # self.im.image.photoimage = self.im.image.photoimage.subsample(2,2)
         else:
             print("No label found")
-        
-    
+
+
 
 
 class imageProcessor:

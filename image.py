@@ -1,6 +1,8 @@
 import numpy as np
 from PIL import Image, ImageTk
 import cv2
+import matplotlib.pyplot as plt
+
 
 class image:
     def __init__(self,path):
@@ -47,12 +49,22 @@ class image:
                 self.delete_background()
             elif filter[0] == "positive":
                 self.positive()
+
             
         elif len(filter)==2:
             if filter[0]=="rotate": 
                 self.rotate(filter[1])
             elif filter[0]=="blur":
                 self.blur(filter[1])
+            elif filter[0]=="brightness":
+                self.brightness(filter[1])
+            elif filter[0]=="adjust_red_saturation":
+                self.adjust_red_saturation(filter[1])
+            elif filter[0]=="adjust_green_saturation":
+                self.adjust_green_saturation(filter[1])
+            elif filter[0]=="adjust_blue_saturation":
+                self.adjust_blue_saturation(filter[1])
+
         elif len(filter)==3:
             if filter[0]=="resize":
                 self.resize(filter[1],filter[2])
@@ -66,8 +78,8 @@ class image:
         self.npimage = cv2.resize(self.npimage, (new_width, new_height))
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
-    def crop(self,x1,x2,y1,y2):
-        self.npimage = self.npimage[y1,y2,x1,x2]
+    def crop(self, x1, x2, y1, y2):
+        self.npimage = self.npimage[y1:y2, x1:x2]
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def rotate(self,direction):
@@ -94,6 +106,12 @@ class image:
         # if radius % 2 == 0: radius += 1
         for i in range(radius):
             self.npimage = cv2.GaussianBlur(self.npimage, (5,5), 0)
+        self.photoimage = self.convert_cv_to_photoimage(self.npimage)
+
+    def brightness(self, value):
+        alpha = 1.5 + value / 100.0  # facteur d'échelle pour la luminosité
+        beta = -0.5  # pour le décalaagge de la luminosite
+        self.npimage = cv2.convertScaleAbs(self.npimage, alpha=alpha, beta=beta)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def sharpen(self):
@@ -138,3 +156,69 @@ class image:
         self.npimage = cv2.bitwise_and(255 - self.npimage, 255 - self.npimage, mask=mask)
         # self.npimage = cv2.cvtColor(self.npimage, cv2.COLOR_GRAY2BGR)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
+
+    def adjust_green_saturation(self, green_saturation_factor):
+        # Convertir l'image en espace de couleurs HSV
+        hsv = cv2.cvtColor(self.npimage, cv2.COLOR_BGR2HSV)
+
+        # Définir la plage de valeurs HSV pour la couleur verte
+        lower_green = np.array([30, 50, 50])
+        upper_green = np.array([90, 255, 255])
+
+        # Créer un masque pour les pixels verts dans l'image HSV
+        green_mask = cv2.inRange(hsv, lower_green, upper_green)
+
+        # Ajuster la saturation des pixels verts dans l'image HSV
+        hsv[:, :, 1][green_mask > 0] = np.clip(hsv[:, :, 1][green_mask > 0] * (green_saturation_factor / 100.0), 0, 255)
+
+        # Convertir l'image HSV modifiée en image BGR
+        self.npimage = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+        self.photoimage = self.convert_cv_to_photoimage(self.npimage)
+
+    def adjust_red_saturation(self, red_saturation_factor):
+        # Convertir l'image en espace de couleurs HSV
+        hsv = cv2.cvtColor(self.npimage, cv2.COLOR_BGR2HSV)
+
+        # Définir la plage de valeurs HSV pour la couleur rouge
+        lower_red1 = np.array([0, 50, 50])
+        upper_red1 = np.array([10, 255, 255])
+        red_mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
+
+        lower_red2 = np.array([170, 50, 50])
+        upper_red2 = np.array([180, 255, 255])
+        red_mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
+
+        red_mask = cv2.bitwise_or(red_mask1, red_mask2)
+
+        # Ajuster la saturation des pixels rouges dans l'image HSV
+        hsv[:, :, 1][red_mask > 0] = np.clip(hsv[:, :, 1][red_mask > 0] * (red_saturation_factor / 100.0), 0, 255)
+
+        # Convertir l'image HSV modifiée en image BGR
+        self.npimage = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+        self.photoimage = self.convert_cv_to_photoimage(self.npimage)
+
+    def adjust_blue_saturation(self, blue_saturation_factor):
+        # Convertir l'image en espace de couleurs HSV
+        hsv = cv2.cvtColor(self.npimage, cv2.COLOR_BGR2HSV)
+
+        # Définir la plage de valeurs HSV pour la couleur bleue
+        lower_blue = np.array([90, 50, 50])
+        upper_blue = np.array([150, 255, 255])
+
+        # Créer un masque pour les pixels bleus dans l'image HSV
+        blue_mask = cv2.inRange(hsv, lower_blue, upper_blue)
+
+        # Ajuster la saturation des pixels bleus dans l'image HSV
+        hsv[:, :, 1][blue_mask > 0] = np.clip(hsv[:, :, 1][blue_mask > 0] * (blue_saturation_factor / 100.0), 0, 255)
+
+        # Convertir l'image HSV modifiée en image BGR
+        self.npimage = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+        self.photoimage = self.convert_cv_to_photoimage(self.npimage)
+
+
+
+
+
+
+
+

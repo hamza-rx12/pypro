@@ -14,6 +14,7 @@ im.applyFilter("sharpen")
 im.applyFilter("negative")
 im.applyFilter("positive")
 im.applyFilter("sharpen")
+im.applyFilter("adjust_saturation")
 print(im.filterList)
 im.image.show()
 npimage = cv2.imread("./src/image.jpg");
