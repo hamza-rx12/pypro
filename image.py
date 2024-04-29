@@ -1,6 +1,8 @@
 import numpy as np
 from PIL import Image, ImageTk
 import cv2
+import matplotlib.pyplot as plt
+
 
 class image:
     def __init__(self,path):
@@ -22,7 +24,7 @@ class image:
         photo_image = ImageTk.PhotoImage(image=pil_image)
 
         return photo_image
-    
+
     def show(self):
         cv2.imshow(self.path,self.npimage)
         cv2.waitKey(0)
@@ -47,9 +49,10 @@ class image:
                 self.delete_background()
             elif filter[0] == "positive":
                 self.positive()
-            
+
+
         elif len(filter)==2:
-            if filter[0]=="rotate": 
+            if filter[0]=="rotate":
                 self.rotate(filter[1])
             elif filter[0]=="blur":
                 self.blur(filter[1])
@@ -75,8 +78,8 @@ class image:
         self.npimage = cv2.resize(self.npimage, (new_width, new_height))
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
-    def crop(self,x1,x2,y1,y2):
-        self.npimage = self.npimage[y1,y2,x1,x2]
+    def crop(self, x1, x2, y1, y2):
+        self.npimage = self.npimage[y1:y2, x1:x2]
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def rotate(self,direction):
@@ -96,13 +99,19 @@ class image:
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def blur(self,radius):
-        
+
         radius=int(radius)
-        if radius==1: 
+        if radius==1:
             return
         # if radius % 2 == 0: radius += 1
         for i in range(radius):
             self.npimage = cv2.GaussianBlur(self.npimage, (5,5), 0)
+        self.photoimage = self.convert_cv_to_photoimage(self.npimage)
+
+    def brightness(self, value):
+        alpha = 1.5 + value / 100.0  # facteur d'échelle pour la luminosité
+        beta = -0.5  # pour le décalaagge de la luminosite
+        self.npimage = cv2.convertScaleAbs(self.npimage, alpha=alpha, beta=beta)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def sharpen(self):

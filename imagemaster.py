@@ -19,7 +19,7 @@ class GUI(Tk):
 
         self.tabs = []
         self.title("Image Master")
-        
+
         self.notebook = ttk.Notebook(self)
         self.notebook.pack(expand=True, fill="both")
         self.add_tab()
@@ -48,23 +48,23 @@ class GUI(Tk):
         # self.filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("jpeg files","*.jpg"),("all files","*.*")))
         # self.tabs[self.notebook.index("current")].importimage()
         self.tabs[self.notebook.index("current")].importimage()
-    
+
     def saveimage(self):
         # self.tabs[self.notebook.index("current")].saveimage()
         self.tabs[self.notebook.index("current")].saveimage()
-        
+
 
 
 class Tab(Frame):
     def __init__(self,master=None):
         super().__init__(master, bg="#2e2e2e")
-        self.filename = None 
-        self.lbl = None 
+        self.filename = None
+        self.lbl = None
         self.im = None
         self.config(bg="#1e1e1e")
 
-        
-        
+
+
         self.frame1 = LabelFrame(self, text="Image: ", padx=10, pady=10, width=700, height=600, bg="#1e1e1e", fg="white", font=("monospace", 10))
         self.frame1.grid(row=0,column=0,padx=10,pady=10)
         self.frame1.pack_propagate(False)
@@ -79,9 +79,9 @@ class Tab(Frame):
         blur_intensity = DoubleVar()
         blur_intensity.set(1)
         self.bl=Label(self.frame3,text="Blur: ", bg="#1e1e1e", fg="white")
-        self.blur_slider = CTkSlider(self.frame3,from_=1, to=21, 
-                                     number_of_steps=10, 
-                                     variable=blur_intensity, 
+        self.blur_slider = CTkSlider(self.frame3,from_=1, to=21,
+                                     number_of_steps=10,
+                                     variable=blur_intensity,
                                      command=lambda x=blur_intensity.get(): self.on_slide("blur",x) if x==int(x) else None )
         self.blur_slider.grid(row=0,column=1)
         self.bl.grid(row=0,column=0, padx=(10, 0), pady=5, sticky='w')
@@ -125,11 +125,11 @@ class Tab(Frame):
                                                     "adjust_blue_saturation", x))
         self.blue_saturation_label.grid(row=4, column=0, padx=(10, 0), pady=5, sticky='w')
         self.blue_saturation_slider.grid(row=4, column=1)
-        
+
         self.importIm = Button(self.frame1, text="Import Image", command=self.importimage, bg="#383838", fg="white", borderwidth=0, activebackground="gray")
         self.importIm.place(relx=0.5, rely=0.5, anchor="center")
 
-        
+
         edge_detect_var=BooleanVar()
         edge_detect=CTkSwitch(frame2,text="Edge detect", variable=edge_detect_var, command=lambda: self.on_click(("edge_detect",),edge_detect_var))
         edge_detect.grid(row=0,column=1,padx=10,pady=10)
@@ -154,6 +154,8 @@ class Tab(Frame):
         self.im.applyFilter(filter)
         self.update_image(self.im.image.photoimage)
 
+
+
     def on_click(self,filter,variable):
         if variable.get():
             self.im.applyFilter(filter)
@@ -166,16 +168,16 @@ class Tab(Frame):
 
     def importimage(self):
         self.filename = filedialog.askopenfilename(
-            initialdir="./src/",  
+            initialdir="./src/",
             title="Select image file",
             filetypes=[("Image files", "*.png *.jpg *.jpeg *.bmp *.gif")]
         )
         self.show_image()
 
     def saveimage(self):
-        file_path = filedialog.asksaveasfilename(defaultextension=".jpg", 
-                                                 filetypes=[("JPEG files", "*.jpg"), 
-                                                            ("PNG files", "*.png"), 
+        file_path = filedialog.asksaveasfilename(defaultextension=".jpg",
+                                                 filetypes=[("JPEG files", "*.jpg"),
+                                                            ("PNG files", "*.png"),
                                                             ("All files", "*.*")])
         if file_path:
             cv2.imwrite(file_path, self.im.image.npimage)
@@ -183,18 +185,18 @@ class Tab(Frame):
 
 
     def show_image(self):
-        if self.filename: 
-            self.importIm.destroy() 
+        if self.filename:
+            self.importIm.destroy()
             self.im = imageProcessor(self.filename)
             self.im.path = self.filename
-            if self.im is not None: 
+            if self.im is not None:
                 if self.lbl: self.lbl.destroy()
                 self.lbl = Label(self.frame1, image=self.im.image.photoimage, bg="#1e1e1e")
                 self.lbl.image = self.im.image.photoimage
                 # self.lbl.pack(padx=10, pady=10, anchor="center", fill="none", expand=False)
                 self.lbl.place(relx=0.5, rely=0.5, anchor="center")
         else:
-            print("No image selected")   
+            print("No image selected")
 
     def update_image(self, photoimage):
         if self.lbl:
