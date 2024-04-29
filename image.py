@@ -1,7 +1,7 @@
 import numpy as np
 from PIL import Image, ImageTk
 import cv2
-import matplotlib.pyplot as plt
+
 
 
 class image:
