@@ -13,14 +13,16 @@ class GUI(Tk):
     def __init__(self):
         super().__init__()
 
-        ttk.Style().configure("TNotebook", background="#3e3e3e", borderwidth=0, relief="flat");
-        ttk.Style().map("TNotebook.Tab", background=[("selected", "#5e5e5e")], foreground=[("selected", "white")]);
-        ttk.Style().configure("TNotebook.Tab", background="#3e3e3e", foreground="white");
+        style = ttk.Style()
+        style.theme_use("default")
+        style.configure("CustomNotebook", background="#3e3e3e", borderwidth=0, relief="flat", padding=[0, 5, 0, 0])
+        style.map("CustomNotebook.Tab", background=[("selected", "#1e1e1e")], foreground=[("selected", "white")])
+        style.configure("CustomNotebook.Tab", background="#3e3e3e", foreground="white", padding=[10, 0, 3, 0])
 
         self.tabs = []
         self.title("Image Master")
 
-        self.notebook = ttk.Notebook(self)
+        self.notebook = CustomNotebook()
         self.notebook.pack(expand=True, fill="both")
         self.add_tab()
         self.current_tab = self.tabs[self.notebook.index("current")]
@@ -28,7 +30,7 @@ class GUI(Tk):
 
     def add_tab(self):
         new_tab = Tab(self.notebook)
-        self.notebook.add(new_tab, text="Tab {}".format(self.notebook.index("end")))
+        self.notebook.add(new_tab, text="Tab {} ".format(self.notebook.index("end")))
         self.tabs.append(new_tab)
         self.current_tab = self.tabs[self.notebook.index("current")]
         print("current tab: ",self.notebook.index("current"))
@@ -102,7 +104,7 @@ class Tab(Frame):
                                                number_of_steps=10,
                                                variable=red_saturation_factor,
                                                command=lambda x=red_saturation_factor.get(): self.on_slide(
-                                                   "adjust_red_saturation", x) if x == int(x) else None)
+                                                   "red_saturation", x) if x == int(x) else None)
         self.red_saturation_label.grid(row=2, column=0, padx=(10, 0), pady=5, sticky='w')
         self.red_saturation_slider.grid(row=2, column=1)
 
@@ -112,7 +114,7 @@ class Tab(Frame):
         self.green_saturation_slider = CTkSlider(self.frame3, from_=0, to=255,number_of_steps=10,
                                                  variable=green_saturation_factor,
                                                  command=lambda x=green_saturation_factor.get(): self.on_slide(
-                                                     "adjust_green_saturation", x))
+                                                     "green_saturation", x))
         self.green_saturation_label.grid(row=3, column=0, padx=(10, 0), pady=5, sticky='w')
         self.green_saturation_slider.grid(row=3, column=1)
 
@@ -122,7 +124,7 @@ class Tab(Frame):
         self.blue_saturation_slider = CTkSlider(self.frame3, from_=0, to=200,
                                                 variable=blue_saturation_factor,
                                                 command=lambda x=blue_saturation_factor.get(): self.on_slide(
-                                                    "adjust_blue_saturation", x))
+                                                    "blue_saturation", x))
         self.blue_saturation_label.grid(row=4, column=0, padx=(10, 0), pady=5, sticky='w')
         self.blue_saturation_slider.grid(row=4, column=1)
 
@@ -201,7 +203,6 @@ class Tab(Frame):
     def update_image(self, photoimage):
         if self.lbl:
             self.lbl.config(image=photoimage)
-            # self.im.image.photoimage = self.im.image.photoimage.subsample(2,2)
         else:
             print("No label found")
 
@@ -236,6 +237,110 @@ class imageProcessor:
         for fil in self.filterList:
             self.image.filter_choose(fil)
 
+
+
+
+
+
+class CustomNotebook(ttk.Notebook):
+    """A ttk Notebook with close buttons on each tab"""
+
+    __initialized = False
+
+    def __init__(self, *args, **kwargs):
+        if not self.__initialized:
+            self.__initialize_custom_style()
+            self.__inititialized = True
+
+        kwargs["style"] = "CustomNotebook"
+        ttk.Notebook.__init__(self, *args, **kwargs)
+
+        self._active = None
+
+        self.bind("<ButtonPress-1>", self.on_close_press, True)
+        self.bind("<ButtonRelease-1>", self.on_close_release)
+
+    def on_close_press(self, event):
+        """Called when the button is pressed over the close button"""
+
+        element = self.identify(event.x, event.y)
+
+        if "close" in element:
+            index = self.index("@%d,%d" % (event.x, event.y))
+            self.state(['pressed'])
+            self._active = index
+            return "break"
+
+    def on_close_release(self, event):
+        """Called when the button is released"""
+        if not self.instate(['pressed']):
+            return
+
+        element =  self.identify(event.x, event.y)
+        if "close" not in element:
+            # user moved the mouse off of the close button
+            return
+
+        index = self.index("@%d,%d" % (event.x, event.y))
+
+        if self._active == index:
+            self.forget(index)
+            self.event_generate("<<NotebookTabClosed>>")
+
+        self.state(["!pressed"])
+        self._active = None
+
+    def __initialize_custom_style(self):
+        style = ttk.Style()
+        self.images = (
+            PhotoImage("img_close", data='''
+                R0lGODlhCAAIAMIBAAAAADs7O4+Pj9nZ2Ts7Ozs7Ozs7Ozs7OyH+EUNyZWF0ZWQg
+                d2l0aCBHSU1QACH5BAEKAAQALAAAAAAIAAgAAAMVGDBEA0qNJyGw7AmxmuaZhWEU
+                5kEJADs=
+                '''),
+            PhotoImage("img_closeactive", data='''
+                R0lGODlhCAAIAMIEAAAAAP/SAP/bNNnZ2cbGxsbGxsbGxsbGxiH5BAEKAAQALAAA
+                AAAIAAgAAAMVGDBEA0qNJyGw7AmxmuaZhWEU5kEJADs=
+                '''),
+            PhotoImage("img_closepressed", data='''
+                R0lGODlhCAAIAMIEAAAAAOUqKv9mZtnZ2Ts7Ozs7Ozs7Ozs7OyH+EUNyZWF0ZWQg
+                d2l0aCBHSU1QACH5BAEKAAQALAAAAAAIAAgAAAMVGDBEA0qNJyGw7AmxmuaZhWEU
+                5kEJADs=
+            ''')
+        )
+
+        style.element_create("close", "image", "img_close",
+                            ("active", "pressed", "!disabled", "img_closepressed"),
+                            ("active", "!disabled", "img_closeactive"), border=8, sticky='')
+        style.layout("CustomNotebook", [("CustomNotebook.client", {"sticky": "nswe"})])
+        style.layout("CustomNotebook.Tab", [
+            ("CustomNotebook.tab", {
+                "sticky": "nswe",
+                "children": [
+                    ("CustomNotebook.padding", {
+                        "side": "top",
+                        "sticky": "nswe",
+                        "children": [
+                            ("CustomNotebook.focus", {
+                                "side": "top",
+                                "sticky": "nswe",
+                                "children": [
+                                    ("CustomNotebook.label", {"side": "left", "sticky": ''}),
+                                    ("CustomNotebook.close", {"side": "left", "sticky": ''}),
+                                ]
+                        })
+                    ]
+                })
+            ]
+        })
+    ])
+
+
+
+
+
+
+
 def main():
     app=GUI()
     icon_image = Image.open('./src/Imagemaster.png')
@@ -245,3 +350,18 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
