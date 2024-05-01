@@ -75,16 +75,27 @@ class Tab(Frame):
         self.frame3 = LabelFrame(self, text="Bars: ", padx=10, pady=10, width=300, height=600, bg="#1e1e1e", fg="white", font=("monospace", 10), relief="groove")
         self.frame3.grid(row=0,column=1,padx=10,pady=10,sticky='nsew')
 
+        # Créer des boutons pour la rotation
 
+        rotate_counterclockwise_var = StringVar()
+        rotate_counterclockwise_var.set(False)
+        self.rotate_left_button = Button(self.frame3,text="Rotate Left",command=lambda: self.on_click(("rotate","counterclockwise"),rotate_counterclockwise_var))
+        self.rotate_left_button.grid(row=0, column=0, sticky="e", padx=10)
+
+        rotate_clockwise_var = StringVar()
+        rotate_clockwise_var.set(True)
+        self.rotate_right_button = Button(self.frame3, text="Rotate Right",command=lambda: self.on_click(("rotate","clockwise"),rotate_clockwise_var))
+        self.rotate_right_button.grid(row=0, column=1, sticky="w", padx=10)
         blur_intensity = DoubleVar()
+
         blur_intensity.set(1)
         self.bl=Label(self.frame3,text="Blur: ", bg="#1e1e1e", fg="white")
         self.blur_slider = CTkSlider(self.frame3,from_=1, to=21,
                                      number_of_steps=10,
                                      variable=blur_intensity,
                                      command=lambda x=blur_intensity.get(): self.on_slide("blur",x) if x==int(x) else None )
-        self.blur_slider.grid(row=0,column=1)
-        self.bl.grid(row=0,column=0, padx=(10, 0), pady=5, sticky='w')
+        self.blur_slider.grid(row=1,column=1)
+        self.bl.grid(row=1,column=0, padx=(10, 0), pady=5, sticky='w')
 
         brightness_intensity = DoubleVar()
         brightness_intensity.set(0)
@@ -92,8 +103,8 @@ class Tab(Frame):
         self.brightness_slider = CTkSlider(self.frame3, from_=-100, to=100, number_of_steps=10,
                                        variable=brightness_intensity,
                                        command=lambda x=brightness_intensity.get(): self.on_slide("brightness", x) if x==int(x) else None)
-        self.brightness_label.grid(row=1, column=0, padx=(10, 0), pady=5, sticky='w')
-        self.brightness_slider.grid(row=1, column=1)
+        self.brightness_label.grid(row=2, column=0, padx=(10, 0), pady=5, sticky='w')
+        self.brightness_slider.grid(row=2, column=1)
 
         red_saturation_factor = DoubleVar()
         red_saturation_factor.set(100)
@@ -103,8 +114,8 @@ class Tab(Frame):
                                                variable=red_saturation_factor,
                                                command=lambda x=red_saturation_factor.get(): self.on_slide(
                                                    "adjust_red_saturation", x) if x == int(x) else None)
-        self.red_saturation_label.grid(row=2, column=0, padx=(10, 0), pady=5, sticky='w')
-        self.red_saturation_slider.grid(row=2, column=1)
+        self.red_saturation_label.grid(row=3, column=0, padx=(10, 0), pady=5, sticky='w')
+        self.red_saturation_slider.grid(row=3, column=1)
 
         green_saturation_factor = DoubleVar()
         green_saturation_factor.set(100)
@@ -113,8 +124,8 @@ class Tab(Frame):
                                                  variable=green_saturation_factor,
                                                  command=lambda x=green_saturation_factor.get(): self.on_slide(
                                                      "adjust_green_saturation", x))
-        self.green_saturation_label.grid(row=3, column=0, padx=(10, 0), pady=5, sticky='w')
-        self.green_saturation_slider.grid(row=3, column=1)
+        self.green_saturation_label.grid(row=4, column=0, padx=(10, 0), pady=5, sticky='w')
+        self.green_saturation_slider.grid(row=4, column=1)
 
         blue_saturation_factor = DoubleVar()
         blue_saturation_factor.set(100)
@@ -123,8 +134,8 @@ class Tab(Frame):
                                                 variable=blue_saturation_factor,
                                                 command=lambda x=blue_saturation_factor.get(): self.on_slide(
                                                     "adjust_blue_saturation", x))
-        self.blue_saturation_label.grid(row=4, column=0, padx=(10, 0), pady=5, sticky='w')
-        self.blue_saturation_slider.grid(row=4, column=1)
+        self.blue_saturation_label.grid(row=5, column=0, padx=(10, 0), pady=5, sticky='w')
+        self.blue_saturation_slider.grid(row=5, column=1)
 
         self.importIm = Button(self.frame1, text="Import Image", command=self.importimage, bg="#383838", fg="white", borderwidth=0, activebackground="gray")
         self.importIm.place(relx=0.5, rely=0.5, anchor="center")
@@ -133,6 +144,10 @@ class Tab(Frame):
         edge_detect_var=BooleanVar()
         edge_detect=CTkSwitch(frame2,text="Edge detect", variable=edge_detect_var, command=lambda: self.on_click(("edge_detect",),edge_detect_var))
         edge_detect.grid(row=0,column=1,padx=10,pady=10)
+
+        flip_var=BooleanVar()
+        flip=CTkSwitch(frame2,text="flip", variable=flip_var, command=lambda: self.on_click(("flip",),flip_var))
+        flip.grid(row=0,column=6,padx=10,pady=10)
 
         sharpen_var=BooleanVar()
         sharpen=CTkSwitch(frame2,text="Sharpen", variable=sharpen_var, command=lambda: self.on_click(("sharpen",),sharpen_var))
@@ -150,6 +165,9 @@ class Tab(Frame):
         negative=CTkSwitch(frame2,text="Negative", variable=negative_var, command=lambda: self.on_click(("negative",),negative_var))
         negative.grid(row=0,column=5,padx=10,pady=10)
 
+
+
+
     def on_slide(self,*filter):
         self.im.applyFilter(filter)
         self.update_image(self.im.image.photoimage)
@@ -163,6 +181,8 @@ class Tab(Frame):
         else:
             self.im.revokeFilter(filter)
             self.update_image(self.im.image.photoimage)
+        self.update_image(self.im.image.photoimage)
+
         # print("Variable value:", variable.get())
         # print("Filter list:", self.im.filterList)
 
@@ -201,9 +221,11 @@ class Tab(Frame):
     def update_image(self, photoimage):
         if self.lbl:
             self.lbl.config(image=photoimage)
+            self.im.image.photoimage = photoimage
             # self.im.image.photoimage = self.im.image.photoimage.subsample(2,2)
         else:
             print("No label found")
+
 
 
 class imageProcessor:
@@ -231,10 +253,15 @@ class imageProcessor:
             print(self.filterList)
 
     def revokeFilter(self, filter):
-        self.image=image.image(self.path)
-        self.filterList.remove(filter)
+        self.image = image.image(self.path)
+        if filter in self.filterList:
+            self.filterList.remove(filter)
+        else:
+            print("Filter not found in the list.")
         for fil in self.filterList:
             self.image.filter_choose(fil)
+
+
 
 def main():
     app=GUI()

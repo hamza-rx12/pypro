@@ -52,10 +52,10 @@ class image:
 
 
         elif len(filter)==2:
-            if filter[0]=="rotate":
-                self.rotate(filter[1])
-            elif filter[0]=="blur":
+            if filter[0]=="blur":
                 self.blur(filter[1])
+            elif filter[0]=="rotate":
+                self.rotate(filter[1])
             elif filter[0]=="brightness":
                 self.brightness(filter[1])
             elif filter[0]=="adjust_red_saturation":
@@ -82,11 +82,11 @@ class image:
         self.npimage = self.npimage[y1:y2, x1:x2]
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
-    def rotate(self,direction):
+    def rotate(self, direction):
         if direction == "clockwise":
-            self.npimage = cv2.rotate(self.npimage, cv2.cv2.ROTATE_90_CLOCKWISE)
+            self.npimage = cv2.rotate(self.npimage, cv2.ROTATE_90_CLOCKWISE)
         elif direction == "counterclockwise":
-            self.npimage = cv2.rotate(self.npimage, cv2.cv2.ROTATE_90_COUNTERCLOCKWISE)
+            self.npimage = cv2.rotate(self.npimage, cv2.ROTATE_90_COUNTERCLOCKWISE)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def flip(self):
