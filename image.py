@@ -32,6 +32,8 @@ class image:
         if len(filter)==1:
             if filter[0]=="flip":
                 self.flip()
+            elif filter[0]=="crop":
+                self.crop()
             elif filter[0]=="grayscale":
                 self.grayscale()
             elif filter[0]=="sharpen":
@@ -46,8 +48,6 @@ class image:
                 self.delete_background()
             elif filter[0] == "positive":
                 self.positive()
-
-
         elif len(filter)==2:
             if filter[0]=="blur":
                 self.blur(filter[1])
@@ -61,23 +61,20 @@ class image:
                 self.green_saturation(filter[1])
             elif filter[0]=="blue_saturation":
                 self.blue_saturation(filter[1])
-
         elif len(filter)==3:
             if filter[0]=="resize":
                 self.resize(filter[1],filter[2])
-
-        elif len(filter)==5:
-            if filter[0]=="crop":
-                self.crop(filter[1],filter[2],filter[3],filter[5])
-
 
     def resize(self,new_width,new_height):
         self.npimage = cv2.resize(self.npimage, (new_width, new_height))
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
-    def crop(self, x1, x2, y1, y2):
-        self.npimage = self.npimage[y1:y2, x1:x2]
-        self.photoimage = self.convert_cv_to_photoimage(self.npimage)
+    def crop(self):
+        if self.npimage is not None:
+            crop_box = cv2.selectROI(self.path, self.npimage)
+            x, y, w, h = crop_box
+            self.npimage = self.npimage[y:y + h, x:x + w]
+            self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def rotate(self, direction):
         if direction == "clockwise":

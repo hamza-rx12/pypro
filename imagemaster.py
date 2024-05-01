@@ -55,8 +55,6 @@ class GUI(Tk):
         # self.tabs[self.notebook.index("current")].saveimage()
         self.tabs[self.notebook.index("current")].saveimage()
 
-
-
 class Tab(Frame):
     def __init__(self,master=None):
         super().__init__(master, bg="#2e2e2e")
@@ -64,8 +62,6 @@ class Tab(Frame):
         self.lbl = None
         self.im = None
         self.config(bg="#1e1e1e")
-
-
 
         self.frame1 = LabelFrame(self, text="Image: ", padx=10, pady=10, width=700, height=600, bg="#1e1e1e", fg="white", font=("monospace", 10))
         self.frame1.grid(row=0,column=0,padx=10,pady=10)
@@ -77,19 +73,21 @@ class Tab(Frame):
         self.frame3 = LabelFrame(self, text="Bars: ", padx=10, pady=10, width=300, height=600, bg="#1e1e1e", fg="white", font=("monospace", 10), relief="groove")
         self.frame3.grid(row=0,column=1,padx=10,pady=10,sticky='nsew')
 
-        # Créer des boutons pour la rotation
 
+        #counterclockwise button
         rotate_counterclockwise_var = StringVar()
         rotate_counterclockwise_var.set(False)
         self.rotate_left_button = Button(self.frame3,text="Rotate Left",command=lambda: self.on_click(("rotate","counterclockwise"),rotate_counterclockwise_var))
         self.rotate_left_button.grid(row=0, column=0, sticky="e", padx=10)
 
+        #clockwise rotate button
         rotate_clockwise_var = StringVar()
         rotate_clockwise_var.set(True)
         self.rotate_right_button = Button(self.frame3, text="Rotate Right",command=lambda: self.on_click(("rotate","clockwise"),rotate_clockwise_var))
-        self.rotate_right_button.grid(row=0, column=1, sticky="w", padx=10)
+        self.rotate_right_button.grid(row=0, column=1,padx=10,pady=10)
         blur_intensity = DoubleVar()
 
+        #blur slider
         blur_intensity.set(1)
         self.bl=Label(self.frame3,text="Blur: ", bg="#1e1e1e", fg="white")
         self.blur_slider = CTkSlider(self.frame3,from_=1, to=21,
@@ -99,6 +97,7 @@ class Tab(Frame):
         self.blur_slider.grid(row=1,column=1)
         self.bl.grid(row=1,column=0, padx=(10, 0), pady=5, sticky='w')
 
+        #brightness button
         brightness_intensity = DoubleVar()
         brightness_intensity.set(0)
         self.brightness_label = Label(self.frame3, text="Brightness:", bg="#1e1e1e", fg="white")
@@ -108,6 +107,7 @@ class Tab(Frame):
         self.brightness_label.grid(row=2, column=0, padx=(10, 0), pady=5, sticky='w')
         self.brightness_slider.grid(row=2, column=1)
 
+        #le boutton pour la saturation de la couleur rouge
         red_saturation_factor = DoubleVar()
         red_saturation_factor.set(100)
         self.red_saturation_label = Label(self.frame3, text="Red Saturation:", bg="#1e1e1e", fg="white")
@@ -118,7 +118,7 @@ class Tab(Frame):
         self.red_saturation_label.grid(row=3, column=0, padx=(10, 0), pady=5, sticky='w')
         self.red_saturation_slider.grid(row=3, column=1)
 
-
+        #le boutton pour la saturation de la couleur verte
         green_saturation_factor = DoubleVar()
         green_saturation_factor.set(100)
         self.green_saturation_label = Label(self.frame3, text="Green Saturation:", bg="#1e1e1e", fg="white")
@@ -128,7 +128,7 @@ class Tab(Frame):
         self.green_saturation_label.grid(row=4, column=0, padx=(10, 0), pady=5, sticky='w')
         self.green_saturation_slider.grid(row=4, column=1)
 
-
+        #le boutton pour la saturation de la couleur bleu
         blue_saturation_factor = DoubleVar()
         blue_saturation_factor.set(100)
         self.blue_saturation_label = Label(self.frame3, text="Blue Saturation:", bg="#1e1e1e", fg="white")
@@ -136,11 +136,15 @@ class Tab(Frame):
         self.blue_saturation_label.grid(row=5, column=0, padx=(10, 0), pady=5, sticky='w')
         self.blue_saturation_slider.grid(row=5, column=1)
 
-
-
+        #le boutton pour importer une image
         self.importIm = Button(self.frame1, text="Import Image", command=self.importimage, bg="#383838", fg="white", borderwidth=0, activebackground="gray")
         self.importIm.place(relx=0.5, rely=0.5, anchor="center")
 
+        #le boutton pour crop
+        crop_var=StringVar()
+        crop_var.set(False)
+        self.crop_button = Button(self.frame3, text="Crop", command=lambda: self.on_click(("crop",),crop_var))
+        self.crop_button.grid(row=0, column=2, padx=10,pady=10)
 
         edge_detect_var=BooleanVar()
         edge_detect=CTkSwitch(frame2,text="Edge detect", variable=edge_detect_var, command=lambda: self.on_click(("edge_detect",),edge_detect_var))
@@ -166,14 +170,9 @@ class Tab(Frame):
         negative=CTkSwitch(frame2,text="Negative", variable=negative_var, command=lambda: self.on_click(("negative",),negative_var))
         negative.grid(row=0,column=5,padx=10,pady=10)
 
-
-
-
     def on_slide(self,*filter):
         self.im.applyFilter(filter)
         self.update_image(self.im.image.photoimage)
-
-
 
     def on_click(self,filter,variable):
         if variable.get():
@@ -203,7 +202,6 @@ class Tab(Frame):
         if file_path:
             cv2.imwrite(file_path, self.im.image.npimage)
             print("Image saved successfully at:", file_path)
-
 
     def show_image(self):
         if self.filename:
@@ -262,10 +260,6 @@ class imageProcessor:
             print("Filter not found in the list.")
         for fil in self.filterList:
             self.image.filter_choose(fil)
-
-
-
-
 
 
 class CustomNotebook(ttk.Notebook):
