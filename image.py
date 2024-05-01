@@ -7,7 +7,7 @@ import cv2
 class image:
     def __init__(self,path):
         self.path = path
-        self.npimage = cv2.imread(path);
+        self.npimage = cv2.imread(path)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def convert_cv_to_photoimage(self, cv_image):
@@ -19,8 +19,6 @@ class image:
         width, height = pil_image.size
         resize_factor = 570/height if (570/height) < (670/width) else 670/width
         pil_image = pil_image.resize((int(width*resize_factor), int(height*resize_factor)))
-
-        # pil_image = pil_image.zoom(2)
         photo_image = ImageTk.PhotoImage(image=pil_image)
 
         return photo_image
@@ -35,7 +33,6 @@ class image:
             if filter[0]=="flip":
                 self.flip()
             elif filter[0]=="grayscale":
-                print("graaaaaaaaay")
                 self.grayscale()
             elif filter[0]=="sharpen":
                 self.sharpen()
@@ -58,12 +55,12 @@ class image:
                 self.rotate(filter[1])
             elif filter[0]=="brightness":
                 self.brightness(filter[1])
-            elif filter[0]=="adjust_red_saturation":
-                self.adjust_red_saturation(filter[1])
-            elif filter[0]=="adjust_green_saturation":
-                self.adjust_green_saturation(filter[1])
-            elif filter[0]=="adjust_blue_saturation":
-                self.adjust_blue_saturation(filter[1])
+            elif filter[0]=="red_saturation":
+                self.red_saturation(filter[1])
+            elif filter[0]=="green_saturation":
+                self.green_saturation(filter[1])
+            elif filter[0]=="blue_saturation":
+                self.blue_saturation(filter[1])
 
         elif len(filter)==3:
             if filter[0]=="resize":
@@ -106,12 +103,6 @@ class image:
         # if radius % 2 == 0: radius += 1
         for i in range(radius):
             self.npimage = cv2.GaussianBlur(self.npimage, (5,5), 0)
-        self.photoimage = self.convert_cv_to_photoimage(self.npimage)
-
-    def brightness(self, value):
-        alpha = 1.5 + value / 100.0  # facteur d'échelle pour la luminosité
-        beta = -0.5  # pour le décalaagge de la luminosite
-        self.npimage = cv2.convertScaleAbs(self.npimage, alpha=alpha, beta=beta)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def sharpen(self):
@@ -163,7 +154,7 @@ class image:
         self.npimage = cv2.convertScaleAbs(self.npimage, alpha=alpha, beta=beta)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
-    def adjust_green_saturation(self, green_saturation_factor):
+    def green_saturation(self, green_saturation_factor):
         # Convertir l'image en espace de couleurs HSV
         hsv = cv2.cvtColor(self.npimage, cv2.COLOR_BGR2HSV)
 
@@ -181,7 +172,7 @@ class image:
         self.npimage = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
-    def adjust_red_saturation(self, red_saturation_factor):
+    def red_saturation(self, red_saturation_factor):
         # Convertir l'image en espace de couleurs HSV
         hsv = cv2.cvtColor(self.npimage, cv2.COLOR_BGR2HSV)
 
@@ -203,7 +194,7 @@ class image:
         self.npimage = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
-    def adjust_blue_saturation(self, blue_saturation_factor):
+    def blue_saturation(self, blue_saturation_factor):
         # Convertir l'image en espace de couleurs HSV
         hsv = cv2.cvtColor(self.npimage, cv2.COLOR_BGR2HSV)
 
