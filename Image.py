@@ -62,6 +62,8 @@ class Image_:
                 self.contrast(filter[1])
             elif filter[0]=="brightness":
                 self.brightness(filter[1])
+            elif filter[0]=="contrast":
+                self.contrast(filter[1])
             elif filter[0]=="rotate_right":
                 self.rotate_right(filter[1])
             elif filter[0]=="rotate_left":
@@ -98,7 +100,7 @@ class Image_:
         for i in range(counter):
             self.npimage = cv2.rotate(self.npimage, cv2.ROTATE_90_CLOCKWISE)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
-        
+
 
     def rotate_left(self, counter):
         for i in range(counter):
