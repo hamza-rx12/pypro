@@ -106,7 +106,7 @@ class Tab(Frame):
         self.blur_slider.grid(row=1,column=1)
         self.bl.grid(row=1,column=0, padx=(10, 0), pady=5, sticky='w')
 
-        #brightness button
+        #brightness slider
         brightness_intensity = DoubleVar()
         brightness_intensity.set(0)
         self.brightness_label = Label(self.frame3, text="Brightness:", bg="#1e1e1e", fg="white")
@@ -116,39 +116,49 @@ class Tab(Frame):
         self.brightness_label.grid(row=2, column=0, padx=(10, 0), pady=5, sticky='w')
         self.brightness_slider.grid(row=2, column=1)
 
-        #le boutton pour la saturation de la couleur rouge
+        #contrast slider
+        contrast_intensity = DoubleVar()
+        contrast_intensity.set(0)
+        self.contrast_label = Label(self.frame3, text="contrast:", bg="#1e1e1e", fg="white")
+        self.contrast_slider = CTkSlider(self.frame3, from_=-50, to=50, number_of_steps=10,
+                                       variable=contrast_intensity,
+                                       command=lambda x=contrast_intensity.get(): self.on_slide("contrast", x) if x==int(x) else None)
+        self.contrast_label.grid(row=3, column=0, padx=(10, 0), pady=5, sticky='w')
+        self.contrast_slider.grid(row=3, column=1)
+
+        #le slider pour la saturation de la couleur rouge
         red_saturation_factor = DoubleVar()
         red_saturation_factor.set(100)
         self.red_saturation_label = Label(self.frame3, text="Red Saturation:", bg="#1e1e1e", fg="white")
         self.red_saturation_slider = CTkSlider(self.frame3, from_=0, to=200,number_of_steps=10,
                                                variable=red_saturation_factor,
                                                command=lambda x=red_saturation_factor.get(): self.on_slide("red_saturation", x) if x == int(x) else None)
-        self.red_saturation_label.grid(row=3, column=0, padx=(10, 0), pady=5, sticky='w')
-        self.red_saturation_slider.grid(row=3, column=1)
+        self.red_saturation_label.grid(row=4, column=0, padx=(10, 0), pady=5, sticky='w')
+        self.red_saturation_slider.grid(row=4, column=1)
 
-        #le boutton pour la saturation de la couleur verte
+        #le slider pour la saturation de la couleur verte
         green_saturation_factor = DoubleVar()
         green_saturation_factor.set(100)
         self.green_saturation_label = Label(self.frame3, text="Green Saturation:", bg="#1e1e1e", fg="white")
         self.green_saturation_slider = CTkSlider(self.frame3, from_=0, to=255,number_of_steps=10,
                                                  variable=green_saturation_factor,
                                                  command=lambda x=green_saturation_factor.get(): self.on_slide( "green_saturation", x))
-        self.green_saturation_label.grid(row=4, column=0, padx=(10, 0), pady=5, sticky='w')
-        self.green_saturation_slider.grid(row=4, column=1)
+        self.green_saturation_label.grid(row=5, column=0, padx=(10, 0), pady=5, sticky='w')
+        self.green_saturation_slider.grid(row=5, column=1)
 
-        #le boutton pour la saturation de la couleur bleu
+        #le slider pour la saturation de la couleur bleu
         blue_saturation_factor = DoubleVar()
         blue_saturation_factor.set(100)
         self.blue_saturation_label = Label(self.frame3, text="Blue Saturation:", bg="#1e1e1e", fg="white")
         self.blue_saturation_slider = CTkSlider(self.frame3, from_=0, to=200,variable=blue_saturation_factor,command=lambda x=blue_saturation_factor.get(): self.on_slide("blue_saturation", x))
-        self.blue_saturation_label.grid(row=5, column=0, padx=(10, 0), pady=5, sticky='w')
-        self.blue_saturation_slider.grid(row=5, column=1)
+        self.blue_saturation_label.grid(row=6, column=0, padx=(10, 0), pady=5, sticky='w')
+        self.blue_saturation_slider.grid(row=6, column=1)
 
         #le boutton pour importer une image
         self.importIm = Button(self.frame1, text="Import Image", command=self.importimage, bg="#383838", fg="white", borderwidth=0, activebackground="gray")
         self.importIm.place(relx=0.5, rely=0.5, anchor="center")
 
-        #le boutton pour crop
+        #boutton pour crop
         crop_var=StringVar()
         crop_var.set(False)
         self.crop_button = Button(self.frame3, text="Crop", command=lambda: self.on_click(("crop",),crop_var))
@@ -177,8 +187,6 @@ class Tab(Frame):
         negative_var=BooleanVar()
         negative=CTkSwitch(frame2,text="Negative", variable=negative_var, command=lambda: self.on_click(("negative",),negative_var))
         negative.grid(row=0,column=5,padx=10,pady=10)
-    
-
 
     def on_slide(self,*filter):
         self.im.applyFilter(filter)

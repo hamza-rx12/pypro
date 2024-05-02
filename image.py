@@ -54,6 +54,8 @@ class image:
                 self.blur(filter[1])
             elif filter[0]=="brightness":
                 self.brightness(filter[1])
+            elif filter[0]=="contrast":
+                self.contrast(filter[1])
             elif filter[0]=="rotate_right":
                 self.rotate_right(filter[1])
             elif filter[0]=="rotate_left":
@@ -156,6 +158,14 @@ class image:
         alpha = 1.5 + value / 100.0  # facteur d'échelle pour la luminosité
         beta = -0.5  # pour le décalaagge de la luminosite
         self.npimage = cv2.convertScaleAbs(self.npimage, alpha=alpha, beta=beta)
+        self.photoimage = self.convert_cv_to_photoimage(self.npimage)
+
+    def contrast(self, contrast_value):
+        contrast_value = float(contrast_value)
+        adjusted_image = np.int16(self.npimage)
+        adjusted_image = adjusted_image * (contrast_value / 127 + 1) - contrast_value
+        adjusted_image = np.clip(adjusted_image, 0, 255)
+        self.npimage = np.uint8(adjusted_image)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
     def green_saturation(self, green_saturation_factor):
