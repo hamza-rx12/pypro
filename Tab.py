@@ -6,7 +6,7 @@ from ImageProcessor import *
 
 class Tab(Frame):
     def __init__(self,master=None):
-        super().__init__(master, bg="#2e2e2e")
+        super().__init__(master)
         self.filename = None
         self.lbl = None
         self.im = None
@@ -48,19 +48,19 @@ class Tab(Frame):
 
         #Left Rotation Button
         def increment_left(): self.counter_left = (self.counter_left+1)%4
-        self.rotate_left_button = Button(self.frame3,text="Rotate Left",
+        rotate_left_button = Button(self.frame3,text="Rotate Left",
                                          bg="#383838", fg="white", borderwidth=0, activebackground="gray",
                                          command=lambda : (increment_left(),self.on_click(("rotate_left",self.counter_left ),variable)),
-                                         width=10, height=1, font=("monospace", 10))
-        self.rotate_left_button.grid(row=0, column=0, sticky="e", padx=45)
+                                         width=15, height=1, font=("monospace", 10))
+        rotate_left_button.grid(row=0, column=0, sticky="e", padx=45)
 
         #Right Rotation Button
         def increment_right(): self.counter_right = (self.counter_right+1)%4
-        self.rotate_right_button = Button(self.frame3, text="Rotate Right",
+        rotate_right_button = Button(self.frame3, text="Rotate Right",
                                           bg="#383838", fg="white", borderwidth=0, activebackground="gray",
                                           command=lambda : (increment_right(),self.on_click(("rotate_right",self.counter_right ),variable)),
-                                          width=10, height=1, font=("monospace", 10))
-        self.rotate_right_button.grid(row=0, column=1,padx=10,pady=10)
+                                          width=15, height=1, font=("monospace", 10))
+        rotate_right_button.grid(row=0, column=1,padx=10,pady=10)
 
         #Cropping Button
         def crop_():
@@ -68,20 +68,20 @@ class Tab(Frame):
             cv2.waitKey(0)
             cv2.destroyAllWindows()
             return crop_box
-        self.crop_button = Button(self.frame3, text="Crop", 
+        crop_button = Button(self.frame3, text="Crop", 
                                   bg="#383838", fg="white", borderwidth=0, activebackground="gray",
                                   command=lambda:self.on_click(("crop",crop_()),variable),
-                                  width=10, height=1, font=("monospace", 10))
-        self.crop_button.grid(row=1, column=0, padx=10,pady=10)
+                                  width=15, height=1, font=("monospace", 10))
+        crop_button.grid(row=1, column=0, padx=10,pady=10)
 
         #Flipping Button
         self.flip_counter = 0;
         def increment_flip(): self.flip_counter = (self.flip_counter + 1)%2
-        self.flip_button = Button(self.frame3, text="Flip", 
+        flip_button = Button(self.frame3, text="Flip", 
                                   bg="#383838", fg="white", borderwidth=0, activebackground="gray",
                                   command=lambda: (increment_flip(),self.on_click(("flip",self.flip_counter),variable)),
-                                  width=10, height=1, font=("monospace", 10))
-        self.flip_button.grid(row=1, column=1, padx=10,pady=10)
+                                  width=15, height=1, font=("monospace", 10))
+        flip_button.grid(row=1, column=1, padx=10,pady=10)
 
 
         ################################################################
@@ -91,63 +91,63 @@ class Tab(Frame):
         #Blur Slider
         blur_intensity = DoubleVar()
         blur_intensity.set(1)
-        self.bl=Label(self.frame3,text="Blur: ", bg="#1e1e1e", fg="white", font=("monospace", 12))
-        self.blur_slider = CTkSlider(self.frame3,from_=1, to=21,
+        bl=Label(self.frame3,text="Blur: ", bg="#1e1e1e", fg="white", font=("monospace", 12))
+        blur_slider = CTkSlider(self.frame3,from_=1, to=21,
                                      number_of_steps=10,
                                      variable=blur_intensity,
                                      command=lambda x=blur_intensity.get(): self.on_slide("blur",x) if x==int(x) else None )
-        self.blur_slider.grid(row=2,column=1)
-        self.bl.grid(row=2,column=0, padx=(10, 0), pady=5, sticky='w')
+        blur_slider.grid(row=2,column=1)
+        bl.grid(row=2,column=0, padx=(10, 0), pady=5, sticky='w')
 
         #Brightness Slider
         brightness_intensity = DoubleVar()
         brightness_intensity.set(0)
-        self.brightness_label = Label(self.frame3, text="Brightness:", bg="#1e1e1e", fg="white", font=("monospace", 12))
-        self.brightness_slider = CTkSlider(self.frame3, from_=-100, to=100, number_of_steps=10,
+        brightness_label = Label(self.frame3, text="Brightness:", bg="#1e1e1e", fg="white", font=("monospace", 12))
+        brightness_slider = CTkSlider(self.frame3, from_=-100, to=100, number_of_steps=10,
                                        variable=brightness_intensity,
                                        command=lambda x=brightness_intensity.get(): self.on_slide("brightness", x) if x==int(x) else None)
-        self.brightness_label.grid(row=3, column=0, padx=(10, 0), pady=5, sticky='w')
-        self.brightness_slider.grid(row=3, column=1)
+        brightness_label.grid(row=3, column=0, padx=(10, 0), pady=5, sticky='w')
+        brightness_slider.grid(row=3, column=1)
 
         #Red Saturation Slider
         red_saturation_factor = DoubleVar()
         red_saturation_factor.set(100)
-        self.red_saturation_label = Label(self.frame3, text="Red Saturation:", bg="#1e1e1e", fg="white", font=("monospace", 12))
-        self.red_saturation_slider = CTkSlider(self.frame3, from_=0, to=200,number_of_steps=10,
+        red_saturation_label = Label(self.frame3, text="Red Saturation:", bg="#1e1e1e", fg="white", font=("monospace", 12))
+        red_saturation_slider = CTkSlider(self.frame3, from_=0, to=200,number_of_steps=10,
                                                variable=red_saturation_factor,
                                                command=lambda x=red_saturation_factor.get(): self.on_slide("red_saturation", x) if x == int(x) else None)
-        self.red_saturation_label.grid(row=4, column=0, padx=(10, 0), pady=5, sticky='w')
-        self.red_saturation_slider.grid(row=4, column=1)
+        red_saturation_label.grid(row=4, column=0, padx=(10, 0), pady=5, sticky='w')
+        red_saturation_slider.grid(row=4, column=1)
 
         #Green Saturation Slider
         green_saturation_factor = DoubleVar()
         green_saturation_factor.set(100)
-        self.green_saturation_label = Label(self.frame3, text="Green Saturation:", bg="#1e1e1e", fg="white", font=("monospace", 12))
-        self.green_saturation_slider = CTkSlider(self.frame3, from_=0, to=255,number_of_steps=10,
+        green_saturation_label = Label(self.frame3, text="Green Saturation:", bg="#1e1e1e", fg="white", font=("monospace", 12))
+        green_saturation_slider = CTkSlider(self.frame3, from_=0, to=255,number_of_steps=10,
                                                  variable=green_saturation_factor,
                                                  command=lambda x=green_saturation_factor.get(): self.on_slide( "green_saturation", x))
-        self.green_saturation_label.grid(row=5, column=0, padx=(10, 0), pady=5, sticky='w')
-        self.green_saturation_slider.grid(row=5, column=1)
+        green_saturation_label.grid(row=5, column=0, padx=(10, 0), pady=5, sticky='w')
+        green_saturation_slider.grid(row=5, column=1)
 
         #Blue Saturation Slider
         blue_saturation_factor = DoubleVar()
         blue_saturation_factor.set(100)
-        self.blue_saturation_label = Label(self.frame3, text="Blue Saturation:", bg="#1e1e1e", fg="white", font=("monospace", 12))
-        self.blue_saturation_slider = CTkSlider(self.frame3, from_=0, to=200,
+        blue_saturation_label = Label(self.frame3, text="Blue Saturation:", bg="#1e1e1e", fg="white", font=("monospace", 12))
+        blue_saturation_slider = CTkSlider(self.frame3, from_=0, to=200,
                                                 variable=blue_saturation_factor,
                                                 command=lambda x=blue_saturation_factor.get(): self.on_slide("blue_saturation", x))
-        self.blue_saturation_label.grid(row=6, column=0, padx=(10, 0), pady=5, sticky='w')
-        self.blue_saturation_slider.grid(row=6, column=1)
+        blue_saturation_label.grid(row=6, column=0, padx=(10, 0), pady=5, sticky='w')
+        blue_saturation_slider.grid(row=6, column=1)
 
         #contrast slider
         contrast_intensity = DoubleVar()
         contrast_intensity.set(0)
-        self.contrast_label = Label(self.frame3, text="Contrast:", bg="#1e1e1e", fg="white",font=("monospace", 12))
-        self.contrast_slider = CTkSlider(self.frame3, from_=-50, to=50, number_of_steps=10,
+        contrast_label = Label(self.frame3, text="Contrast:", bg="#1e1e1e", fg="white",font=("monospace", 12))
+        contrast_slider = CTkSlider(self.frame3, from_=-50, to=50, number_of_steps=10,
                                        variable=contrast_intensity,
                                        command=lambda x=contrast_intensity.get(): self.on_slide("contrast", x) if x==int(x) else None)
-        self.contrast_label.grid(row=7, column=0, padx=(10, 0), pady=5, sticky='w')
-        self.contrast_slider.grid(row=7, column=1)
+        contrast_label.grid(row=7, column=0, padx=(10, 0), pady=5, sticky='w')
+        contrast_slider.grid(row=7, column=1)
 
 
         ################################################################
@@ -161,13 +161,6 @@ class Tab(Frame):
                               command=lambda: self.on_click(("edge_detect",),edge_detect_var),
                               font=("monospace", 14))
         edge_detect.grid(row=0,column=1,padx=10,pady=10)
-
-        #Flipping Switch
-        # flip_var=BooleanVar()
-        # flip=CTkSwitch(self.frame2,text="flip", 
-        #                variable=flip_var, 
-        #                command=lambda: self.on_click(("flip",),flip_var))
-        # flip.grid(row=0,column=6,padx=10,pady=10)
 
         #Sharpening Switch
         sharpen_var=BooleanVar()
@@ -227,6 +220,9 @@ class Tab(Frame):
         submit_buttom.grid(row=11,column=1, pady=5)
 
 
+    ################################################################
+    #####################      METHODS     #########################
+    ################################################################
     
 
     def get_values(self):
@@ -238,7 +234,6 @@ class Tab(Frame):
 
 
     def on_click(self,filter,variable):
-        if filter[0]=="flip": print("--------------",variable.get())
         if variable.get():
             self.im.applyFilter(filter)
             self.update_image(self.im.image.photoimage)
