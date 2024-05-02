@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
-import image
+import Image
 import imagemaster
 
-im = image.image("./src/free-images.jpg")
+im = Image.image("./src/free-images.jpg")
 im.blur()
 im.sharpen()
 print(im)
