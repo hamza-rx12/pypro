@@ -7,7 +7,9 @@ import os
 import cv2
 from PIL import Image,ImageTk
 
-
+################################################################
+#################          GUI CLASS            ################
+################################################################
 
 class GUI(Tk):
     def __init__(self):
@@ -55,12 +57,17 @@ class GUI(Tk):
         # self.tabs[self.notebook.index("current")].saveimage()
         self.tabs[self.notebook.index("current")].saveimage()
 
+################################################################
+#################          TAB CLASS            ################
+################################################################
 class Tab(Frame):
     def __init__(self,master=None):
         super().__init__(master, bg="#2e2e2e")
         self.filename = None
         self.lbl = None
         self.im = None
+        self.counter_left = 0
+        self.counter_right = 0
         self.config(bg="#1e1e1e")
 
         self.frame1 = LabelFrame(self, text="Image: ", padx=10, pady=10, width=700, height=600, bg="#1e1e1e", fg="white", font=("monospace", 10))
@@ -75,19 +82,21 @@ class Tab(Frame):
 
 
         #counterclockwise button
-        rotate_counterclockwise_var = StringVar()
-        rotate_counterclockwise_var.set(False)
-        self.rotate_left_button = Button(self.frame3,text="Rotate Left",command=lambda: self.on_click(("rotate","counterclockwise"),rotate_counterclockwise_var))
+        rotate_counterclockwise_var = BooleanVar()
+        rotate_counterclockwise_var.set(True)
+        def increment_left(): self.counter_left = (self.counter_left+1)%4
+        self.rotate_left_button = Button(self.frame3,text="Rotate Left",command=lambda : (increment_left(),self.on_click(("rotate_left",self.counter_left ),rotate_counterclockwise_var)))
         self.rotate_left_button.grid(row=0, column=0, sticky="e", padx=10)
 
         #clockwise rotate button
-        rotate_clockwise_var = StringVar()
+        rotate_clockwise_var = BooleanVar()
         rotate_clockwise_var.set(True)
-        self.rotate_right_button = Button(self.frame3, text="Rotate Right",command=lambda: self.on_click(("rotate","clockwise"),rotate_clockwise_var))
+        def increment_right(): self.counter_right = (self.counter_right+1)%4
+        self.rotate_right_button = Button(self.frame3, text="Rotate Right",command=lambda : (increment_right(),self.on_click(("rotate_right",self.counter_right ),rotate_clockwise_var)))
         self.rotate_right_button.grid(row=0, column=1,padx=10,pady=10)
-        blur_intensity = DoubleVar()
 
         #blur slider
+        blur_intensity = DoubleVar()
         blur_intensity.set(1)
         self.bl=Label(self.frame3,text="Blur: ", bg="#1e1e1e", fg="white")
         self.blur_slider = CTkSlider(self.frame3,from_=1, to=21,
@@ -111,8 +120,7 @@ class Tab(Frame):
         red_saturation_factor = DoubleVar()
         red_saturation_factor.set(100)
         self.red_saturation_label = Label(self.frame3, text="Red Saturation:", bg="#1e1e1e", fg="white")
-        self.red_saturation_slider = CTkSlider(self.frame3, from_=0, to=200,
-                                               number_of_steps=10,
+        self.red_saturation_slider = CTkSlider(self.frame3, from_=0, to=200,number_of_steps=10,
                                                variable=red_saturation_factor,
                                                command=lambda x=red_saturation_factor.get(): self.on_slide("red_saturation", x) if x == int(x) else None)
         self.red_saturation_label.grid(row=3, column=0, padx=(10, 0), pady=5, sticky='w')
@@ -169,6 +177,8 @@ class Tab(Frame):
         negative_var=BooleanVar()
         negative=CTkSwitch(frame2,text="Negative", variable=negative_var, command=lambda: self.on_click(("negative",),negative_var))
         negative.grid(row=0,column=5,padx=10,pady=10)
+    
+
 
     def on_slide(self,*filter):
         self.im.applyFilter(filter)
@@ -246,6 +256,15 @@ class imageProcessor:
             for fil in self.filterList:
                 self.image.filter_choose(fil)
                 print(self.filterList)
+        elif len(filter)==1:
+            if filter[0] not in filternames:
+                self.filterList.append(filter)
+            else :
+                self.filterList.pop(filternames.index(filter[0]))
+                self.filterList.append(filter)
+            for fil in self.filterList:
+                self.image.filter_choose(fil)
+            print(self.filterList)
         else:
             self.filterList.append(filter)
             for fil in self.filterList:

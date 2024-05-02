@@ -48,13 +48,16 @@ class image:
                 self.delete_background()
             elif filter[0] == "positive":
                 self.positive()
+
         elif len(filter)==2:
             if filter[0]=="blur":
                 self.blur(filter[1])
-            elif filter[0]=="rotate":
-                self.rotate(filter[1])
             elif filter[0]=="brightness":
                 self.brightness(filter[1])
+            elif filter[0]=="rotate_right":
+                self.rotate_right(filter[1])
+            elif filter[0]=="rotate_left":
+                self.rotate_left(filter[1])
             elif filter[0]=="red_saturation":
                 self.red_saturation(filter[1])
             elif filter[0]=="green_saturation":
@@ -72,14 +75,18 @@ class image:
     def crop(self):
         if self.npimage is not None:
             crop_box = cv2.selectROI(self.path, self.npimage)
+            cv2.destroyAllWindows()
             x, y, w, h = crop_box
             self.npimage = self.npimage[y:y + h, x:x + w]
             self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
-    def rotate(self, direction):
-        if direction == "clockwise":
+    def rotate_right(self, counter):
+        for i in range(counter):
             self.npimage = cv2.rotate(self.npimage, cv2.ROTATE_90_CLOCKWISE)
-        elif direction == "counterclockwise":
+        self.photoimage = self.convert_cv_to_photoimage(self.npimage)
+        
+    def rotate_left(self, counter):
+        for i in range(counter):
             self.npimage = cv2.rotate(self.npimage, cv2.ROTATE_90_COUNTERCLOCKWISE)
         self.photoimage = self.convert_cv_to_photoimage(self.npimage)
 
